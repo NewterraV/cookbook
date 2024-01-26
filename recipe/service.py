@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, F
 
 from recipe.models import Recipe, RecipeIngredient, Ingredient
 
@@ -51,3 +51,18 @@ def add_product_to_recipe(params):
         weight=weight
     )
     return 201
+
+
+@query_debugger
+def cook_recipe(recipe_id: int) -> int:
+
+    recipe_ing = RecipeIngredient.objects.select_related(
+        'ingredient').filter(recipe_id=recipe_id)
+    ing = [item.ingredient for item in recipe_ing]
+
+    for item in ing:
+        item.count_use = F('count_use') + 1
+
+    Ingredient.objects.bulk_update(ing, ["count_use"], batch_size=100)
+
+    return 202

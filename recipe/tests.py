@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from recipe.models import Recipe, Ingredient, RecipeIngredient
-from recipe.service import add_product_to_recipe
+from recipe.service import add_product_to_recipe, cook_recipe
 
 
 class TestMixin:
@@ -50,3 +50,15 @@ class TestAddProductToRecipe(TestMixin, TestCase):
         response = add_product_to_recipe(data)
         self.assertEqual(response, 201)
         self.assertEqual(RecipeIngredient.objects.count(), 3)
+
+    def test_cook_recipe(self):
+        recipe_id = Recipe.objects.get(name='test').pk
+
+        result = cook_recipe(recipe_id)
+        recipe_ing = RecipeIngredient.objects.select_related(
+            'ingredient').filter(recipe=recipe_id)
+        ing = [item.ingredient for item in recipe_ing]
+
+        self.assertEqual(result, 202)
+        self.assertEqual(ing[0].count_use, 1)
+        self.assertEqual(ing[1].count_use, 1)
