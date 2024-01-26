@@ -60,5 +60,5 @@ class RecipeIngredient(models.Model):
         return f'{self.ingredient} - {self.quantity}'
 
     class Meta:
-        verbose_name = 'Вес ингредиента для рецепта'
-        verbose_name_plural = 'Вес ингредиентов для рецепта'
+        verbose_name = 'Ингридиент для рецепта'
+        verbose_name_plural = 'Ингридиенты для рецепта'
