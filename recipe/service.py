@@ -1,36 +1,18 @@
-from django.db.models import Prefetch, Q, F
+from typing import List, Dict
+
+from django.db.models import Q, F
 
 from recipe.models import Recipe, RecipeIngredient, Ingredient
 
-from django.db import connection, reset_queries
-import time
-import functools
 
-
-def query_debugger(func):
-    @functools.wraps(func)
-    def inner_func(*args, **kwargs):
-        reset_queries()
-
-        start_queries = len(connection.queries)
-
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        end = time.perf_counter()
-
-        end_queries = len(connection.queries)
-
-        print(f"Function : {func.__name__}")
-        print(f"Number of Queries : {end_queries - start_queries}")
-        print(f"Finished in : {(end - start):.2f}s")
-        return result
-
-    return inner_func
-
-
-@query_debugger
-def add_product_to_recipe(params):
-    """Метод добавляет/обновляет ингредиент рецепта"""
+def add_product_to_recipe(params: Dict[str, str]) -> int:
+    """
+    Функция добавляет к указанному рецепту указанный продукт с указанным
+    весом. Если в рецепте уже есть такой продукт, то функция меняет его
+    вес в этом рецепте на указанный.
+    :param params:
+    :return:
+    """
     recipe_id = params['recipe_id']
     product_id = params['product_id']
     weight = params['weight']
@@ -53,9 +35,13 @@ def add_product_to_recipe(params):
     return 201
 
 
-@query_debugger
 def cook_recipe(recipe_id: int) -> int:
-
+    """
+    Функция увеличивает на единицу количество приготовленных блюд для
+    каждого продукта, входящего в указанный рецепт.
+    :param recipe_id: ID рецепта
+    :return:
+    """
     recipe_ing = RecipeIngredient.objects.select_related(
         'ingredient').filter(recipe_id=recipe_id)
     ing = [item.ingredient for item in recipe_ing]
@@ -66,3 +52,19 @@ def cook_recipe(recipe_id: int) -> int:
     Ingredient.objects.bulk_update(ing, ["count_use"], batch_size=100)
 
     return 202
+
+
+def get_recipes_without_product(product_id: int) -> List[Recipe]:
+    """
+    Метод получает ID продукта(ингредиента) и возвращает список рецептов, где
+    данный продукт не используется либо присутствует в количестве меньше 10
+    грамм.
+    :param product_id: ID продукта/ингредиента
+    :return:
+    """
+    query = RecipeIngredient.objects.filter(
+        ingredient__id=product_id, weight__gte=10
+    ).values_list('recipe_id', flat=True)
+    queryset = Recipe.objects.exclude(
+        id__in=query)
+    return queryset
