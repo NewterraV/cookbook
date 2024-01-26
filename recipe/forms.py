@@ -7,7 +7,7 @@ from recipe.models import RecipeIngredient
 class RecipeIngredientForm(forms.ModelForm):
     class Meta:
         model = RecipeIngredient
-        fields = ['recipe', 'ingredient', 'quantity']
+        fields = ['recipe', 'ingredient', 'weight']
         read_only_fields = ['recipe']
 
 

@@ -46,7 +46,7 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
     )
     ingredient = models.ForeignKey(
         Ingredient,
@@ -54,10 +54,10 @@ class RecipeIngredient(models.Model):
         verbose_name='Ингредиент',
         **NULLABLE
     )
-    quantity = models.PositiveIntegerField(verbose_name='Вес в гр.')
+    weight = models.PositiveIntegerField(verbose_name='Вес в гр.')
 
     def __str__(self):
-        return f'{self.ingredient} - {self.quantity}'
+        return f'{self.ingredient} - {self.weight}'
 
     class Meta:
         verbose_name = 'Ингридиент для рецепта'
