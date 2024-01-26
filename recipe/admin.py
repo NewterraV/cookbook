@@ -1,7 +1,6 @@
 from django.contrib import admin
-from django.forms import inlineformset_factory
 from recipe.models import Recipe, Ingredient, RecipeIngredient
-from recipe.forms import RecipeIngredientForm, RecipeIngredientFormset
+from recipe.forms import RecipeIngredientFormset
 
 
 class RecipeIngredientInline(admin.TabularInline):

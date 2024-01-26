@@ -29,9 +29,9 @@ ENV_TYPE = os.getenv('ENV_TYPE')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == '1'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -87,6 +87,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASES_NAME'),
         'USER': os.getenv('DATABASES_USER'),
         'HOST': os.getenv('DATABASES_HOST'),
+        # 'PASSWORD': os.getenv('DATABASES_PASSWORD')
     }
 }
 

@@ -52,6 +52,7 @@ class RecipeIngredient(models.Model):
         Ingredient,
         on_delete=models.CASCADE,
         verbose_name='Ингредиент',
+        **NULLABLE
     )
     weight = models.PositiveIntegerField(verbose_name='Вес в гр.')
 

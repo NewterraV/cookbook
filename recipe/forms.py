@@ -22,6 +22,8 @@ class RecipeIngredientFormset(forms.models.BaseInlineFormSet):
             ing = form.cleaned_data.get('ingredient')
             if ing:
                 ingredients.append(form.cleaned_data.get('ingredient').pk)
+            else:
+                raise ValidationError('Поле ингредиент не может быть пустым')
         if len(ingredients) != len(set(ingredients)):
             raise ValidationError('Один и тот же ингредиент не может '
                                   'быть использован дважды в одном рецепте')

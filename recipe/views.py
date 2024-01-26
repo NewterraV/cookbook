@@ -1,9 +1,10 @@
 from django.views.generic import ListView
+from django.db import transaction
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 
 from recipe import service
-from django.http import HttpResponse
-
-from recipe.models import Ingredient
+from recipe.models import Ingredient, Recipe
 
 
 def add_product_to_recipe(request):
@@ -17,8 +18,13 @@ def add_product_to_recipe(request):
         @weight: Вес ингредиента
     """
     if request.method == 'GET':
-        status = service.add_product_to_recipe(request.GET)
+        get_object_or_404(Recipe, pk=request.GET.get('recipe_id'))
+        get_object_or_404(Ingredient, pk=request.GET.get('product_id'))
+
+        with transaction.atomic():
+            status = service.add_product_to_recipe(request.GET)
         return HttpResponse(status=status)
+
     return HttpResponse(status=405)
 
 
@@ -30,8 +36,12 @@ def cook_recipe(request):
         @recipe_id: ID рецепта
     """
     if request.method == 'GET':
-        status = service.cook_recipe(request.GET['recipe_id'])
+        get_object_or_404(Recipe, pk=request.GET.get('recipe_id'))
+
+        with transaction.atomic():
+            status = service.cook_recipe(request.GET['recipe_id'])
         return HttpResponse(status=status)
+
     return HttpResponse(status=405)
 
 
@@ -48,5 +58,6 @@ class IngredientListView(ListView):
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
+        get_object_or_404(Ingredient, pk=pk)
         queryset = service.get_recipes_without_product(pk)
         return queryset
