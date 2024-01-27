@@ -6,14 +6,14 @@ from recipe.forms import RecipeIngredientFormset
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     formset = RecipeIngredientFormset
-    extra = 1
+    extra = 0
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     """Админка рецептов"""
 
-    list_display = 'name',
+    list_display = 'id', 'name',
     fields = 'name',
     inlines = RecipeIngredientInline,
 
@@ -21,6 +21,6 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(Ingredient)
 class IngredientModelAdmin(admin.ModelAdmin):
     """Админка Ингридиентов"""
-    list_display = 'name', 'count_use'
+    list_display = 'id', 'name', 'count_use'
     fields = 'name',
     readonly_fields = 'count_use',
