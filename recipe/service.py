@@ -17,8 +17,7 @@ def add_product_to_recipe(params: Dict[str, str]) -> int:
     recipe_id = params['recipe_id']
     product_id = params['product_id']
     weight = params['weight']
-    ing = RecipeIngredient.objects.select_related(
-        'recipe', 'ingredient').filter(
+    ing = RecipeIngredient.objects.select_for_update().filter(
         Q(recipe_id=recipe_id) & Q(ingredient=product_id)).first()
 
     if ing:
@@ -26,11 +25,9 @@ def add_product_to_recipe(params: Dict[str, str]) -> int:
         ing.save()
         return 202
 
-    recipe = Recipe.objects.get(id=recipe_id)
-    ingredient = Ingredient.objects.get(id=product_id)
     RecipeIngredient.objects.create(
-        recipe=recipe,
-        ingredient=ingredient,
+        recipe_id=recipe_id,
+        ingredient_id=product_id,
         weight=weight
     )
     return 201
