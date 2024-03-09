@@ -42,12 +42,12 @@ def cook_recipe(recipe_id: int) -> int:
     """
     recipe_ing = RecipeIngredient.objects.select_related(
         'ingredient').filter(recipe_id=recipe_id)
-    ing = [item.ingredient for item in recipe_ing]
+    ingredient = [item.ingredient for item in recipe_ing]
 
     for item in ing:
         item.count_use = F('count_use') + 1
 
-    Ingredient.objects.bulk_update(ing, ["count_use"], batch_size=100)
+    Ingredient.objects.bulk_update(ingredient, ["count_use"], batch_size=100)
 
     return 202
 
