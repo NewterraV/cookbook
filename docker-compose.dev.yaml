@@ -24,6 +24,9 @@ services:
 
   nginx:
     image: nginx:latest
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     ports:
       - "8080:80"
     volumes:
