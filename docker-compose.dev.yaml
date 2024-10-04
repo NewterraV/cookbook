@@ -1,0 +1,43 @@
+version: '3.12'
+services:
+
+  db:
+    image: postgres:latest
+    container_name: cookbook-postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - cookbook:/var/lib/postgresql/data/
+
+  app:
+    build: .
+    container_name: cookbook-app
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:8000"
+    volumes:
+      - /var/www/html:/usr/share/nginx/html
+    restart: always
+
+
+#networks:
+#  default:
+#    name: cookbook
+#    external: true
+
+volumes:
+  cookbook:
+    name: cookbook-postgres
+  media:
+    name: cookbook-media
