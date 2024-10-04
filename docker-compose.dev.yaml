@@ -22,17 +22,13 @@ services:
     depends_on:
       - db
 
-#  nginx:
-#    image: nginx:latest
-#    build:
-#      context: .
-#      dockerfile: nginx
-#    ports:
-#      - "8080:80"
-#    volumes:
-#      - /var/www/html:/usr/share/nginx/html
-#    restart: always
-
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - /var/www/html:/usr/share/nginx/html
+    restart: always
 
 #networks:
 #  default:
